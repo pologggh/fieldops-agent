@@ -1,0 +1,19 @@
+{
+  "model": "mock",
+  "evaluated_at": "2026-09-04T06:43:57.762619+00:00",
+  "total_cases": 32,
+  "failed_count": 0,
+  "duration_seconds": 0.0,
+  "metrics": {
+    "service_type_accuracy_pct": 100.0,
+    "urgency_accuracy_pct": 100.0,
+    "location_accuracy_pct": 100.0,
+    "preferred_time_accuracy_pct": 100.0,
+    "skills_precision": 1.0,
+    "skills_recall": 1.0,
+    "skills_f1": 1.0,
+    "unsupported_field_rate_pct": 0.0,
+    "description_non_empty_rate_pct": 100.0
+  },
+  "failed_cases": []
+}

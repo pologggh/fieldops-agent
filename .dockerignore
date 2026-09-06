@@ -1,0 +1,42 @@
+# Version control & CI
+.git
+.gitignore
+.github
+
+# Python cache & build artifacts
+__pycache__
+*.py[cod]
+*.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing, Coverage & Linters
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.ruff_cache/
+
+# Local databases, checkpoints & logs
+*.sqlite
+checkpoints.sqlite
+*.log
+
+# Evaluation results & artifacts
+evaluation/results/

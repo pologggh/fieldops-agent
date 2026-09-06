@@ -1,0 +1,13 @@
+{
+  "evaluated_at": "2026-09-04T11:27:21.645157+00:00",
+  "total_cases": 5,
+  "failed_count": 0,
+  "duration_seconds": 0.16,
+  "metrics": {
+    "task_completion_rate_pct": 100.0,
+    "final_state_accuracy_pct": 100.0,
+    "approval_status_accuracy_pct": 100.0,
+    "unexpected_crash_count": 0
+  },
+  "failed_cases": []
+}

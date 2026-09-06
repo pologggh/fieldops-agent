@@ -1,0 +1,56 @@
+groups:
+  - name: fieldops_alerts
+    rules:
+      - alert: HighHttpErrorRate
+        expr: (sum(rate(fieldops_http_errors_total[5m])) / (sum(rate(fieldops_http_requests_total[5m])) + 0.001)) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "FieldOps API error rate exceeded 5% over 5m window"
+          description: "High rate of 4xx/5xx responses detected on {{ $labels.path }}."
+
+      - alert: HighHttpLatencyP95
+        expr: histogram_quantile(0.95, sum(rate(fieldops_http_request_duration_seconds_bucket[5m])) by (le)) > 2.0
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "FieldOps API p95 latency exceeds 2.0 seconds"
+          description: "p95 latency is {{ $value }}s, indicating potential database or workflow slowdown."
+
+      - alert: DatabasePoolExhaustionWarning
+        expr: (fieldops_db_pool_checkedout / (fieldops_db_pool_size + 0.001)) > 0.85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Database connection pool utilization above 85%"
+          description: "Checked out DB connections: {{ $value }} of capacity."
+
+      - alert: OutboxBacklogHigh
+        expr: fieldops_outbox_pending > 50
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Transactional Outbox backlog has accumulated more than 50 pending events"
+          description: "Pending events count: {{ $value }}. Check Redis broker and Celery worker health."
+
+      - alert: LlmFailureRateHigh
+        expr: (sum(rate(fieldops_llm_failures_total[5m])) / (sum(rate(fieldops_llm_requests_total[5m])) + 0.001)) > 0.10
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "LLM invocation failure rate exceeds 10%"
+          description: "Frequent LLM API timeouts or rate limits observed for model {{ $labels.model }}."
+
+      - alert: NotificationJobFailures
+        expr: sum(rate(fieldops_notification_failures_total[5m])) > 0.05
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Background notification delivery failure rate spike"
+          description: "Notification jobs of type {{ $labels.job_type }} are failing repeatedly."

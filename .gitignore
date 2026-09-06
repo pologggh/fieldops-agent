@@ -1,0 +1,64 @@
+# Environment variables
+.env
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.sqlite
+*.db
+checkpoints.sqlite
+
+# Pytest & testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Performance testing results
+performance/results/
+
+# Local secrets (keep configuration templates)
+.env.*
+!.env.example
+!.env.production.example
+*.pem
+*.key
+credentials*.json
+*service-account*.json
+secrets/
+
+# Frontend dependencies and generated output
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+
+# Database journals and runtime output
+*.sqlite-*
+*.db-*
+*.log
+*.egg-info/
+build/
+
+# Local conversation dumps and scratch files
+/*prompt*.txt
+/scratch*.txt
+/section114_clean.txt

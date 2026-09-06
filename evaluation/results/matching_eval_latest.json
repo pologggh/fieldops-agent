@@ -1,0 +1,16 @@
+{
+  "evaluated_at": "2026-09-04T06:43:53.973459+00:00",
+  "total_cases": 14,
+  "failed_count": 0,
+  "duration_seconds": 0.01,
+  "metrics": {
+    "exact_candidate_set_accuracy_pct": 100.0,
+    "status_accuracy_pct": 100.0,
+    "candidate_precision": 1.0,
+    "candidate_recall": 1.0,
+    "candidate_f1": 1.0,
+    "missing_info_handling_accuracy_pct": 100.0,
+    "no_candidate_accuracy_pct": 100.0
+  },
+  "failed_cases": []
+}

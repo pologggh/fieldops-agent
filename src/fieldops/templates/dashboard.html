@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FieldOps Agent — 现场服务智能协同调度工作台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .animate-pulse-slow { animation: pulse-slow 2s infinite ease-in-out; }
+    .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Top Navbar -->
+  <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-50 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <i class="fa-solid fa-robot text-xl text-white"></i>
+        </div>
+        <div>
+          <span class="font-bold text-lg bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">FieldOps Agent</span>
+          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono">Phase 18 Hardened</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4 text-sm">
+        <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="sys-status" class="font-medium text-xs">System Healthy</span>
+        </div>
+        <a href="/docs" target="_blank" class="text-slate-400 hover:text-white transition flex items-center space-x-1">
+          <i class="fa-solid fa-book-open"></i>
+          <span>API 文档</span>
+        </a>
+        <a href="/metrics" target="_blank" class="text-slate-400 hover:text-white transition flex items-center space-x-1">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Prometheus</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+    <!-- Top Architecture & Workflow Banner -->
+    <div class="bg-gradient-to-r from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-900/50 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+            <span>AI 现场服务自动化排班与人机协同调度</span>
+          </h1>
+          <p class="text-slate-400 text-sm mt-1">
+            由 <strong>FastAPI + LangGraph + PostgreSQL + Redis</strong> 驱动，具备自然语言抽取、确定性技师匹配、动态排班冲突检测、行级排他锁、HITL 挂起恢复以及高并发生产加固能力。
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="pingSystem()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-arrows-rotate"></i> 刷新探针
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core Grid: Left (Customer Intake) & Right (Operator HITL) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      <!-- Left Column: Customer Service Request Intake (7 cols) -->
+      <section class="lg:col-span-7 space-y-6">
+        <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-5">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-clipboard-list text-indigo-400 text-lg"></i>
+              <h2 class="text-lg font-semibold text-white">工单受理与智能解析 (Customer Intake)</h2>
+            </div>
+            <span class="text-xs text-slate-400">支持自由自然语言输入</span>
+          </div>
+
+          <!-- Preset Scenarios -->
+          <div class="mb-5">
+            <label class="block text-xs font-medium text-slate-400 mb-2">快速填充预设场景测试：</label>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="fillPreset(1)" class="px-2.5 py-1.5 rounded-lg bg-indigo-950/80 hover:bg-indigo-900/80 border border-indigo-700/40 text-indigo-300 text-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-snowflake"></i> 新宿空调漏水故障 (HVAC)
+              </button>
+              <button onclick="fillPreset(2)" class="px-2.5 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/80 border border-cyan-700/40 text-cyan-300 text-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-faucet-drip"></i> 新宿厨房水管爆裂 (Plumbing)
+              </button>
+              <button onclick="fillPreset(3)" class="px-2.5 py-1.5 rounded-lg bg-amber-950/80 hover:bg-amber-900/80 border border-amber-700/40 text-amber-300 text-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-bolt"></i> 横滨配电箱短路跳闸 (Electrical)
+              </button>
+            </div>
+          </div>
+
+          <!-- Intake Form -->
+          <form id="intake-form" onsubmit="submitRequest(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">客户姓名</label>
+                <input id="customer-name" type="text" required value="Charlie" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">邮箱地址</label>
+                <input id="customer-email" type="email" required value="charlie@example.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">联系电话</label>
+                <input id="customer-phone" type="text" required value="090-5555-6666" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-xs text-slate-400">报修自然语言描述 (最大限制 2000 字符)</label>
+                <span id="char-count" class="text-xs text-slate-500 font-mono">0 / 2000</span>
+              </div>
+              <textarea id="service-message" rows="3" required oninput="updateCharCount()" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500 transition placeholder-slate-600">Air conditioner not blowing cold air in Shinjuku tomorrow afternoon</textarea>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <div class="flex items-center space-x-2">
+                <input type="checkbox" id="use-idempotency" checked class="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                <label for="use-idempotency" class="text-xs text-slate-400">启用幂等保护 (Idempotency-Key)</label>
+              </div>
+              <button id="submit-btn" type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg shadow-indigo-600/30 flex items-center space-x-2">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>启动 AI 调度编排</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Workflow State Visualizer -->
+        <div id="workflow-card" class="bg-slate-950/70 border border-slate-800 rounded-2xl p-6 shadow-xl hidden">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+              <i class="fa-solid fa-diagram-project text-indigo-400"></i>
+              <span>LangGraph 工作流编排状态 (Workflow Execution State)</span>
+            </h3>
+            <span id="workflow-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              waiting_for_approval
+            </span>
+          </div>
+
+          <!-- Execution Steps Stepper -->
+          <div class="space-y-3 text-sm">
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800/80">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">1. LLM 解析语义与硬规则校验</div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <div><span class="text-slate-500">类型:</span> <span id="res-type" class="font-medium text-slate-200"></span></div>
+                <div><span class="text-slate-500">紧急度:</span> <span id="res-urgency" class="font-medium text-slate-200"></span></div>
+                <div><span class="text-slate-500">区域:</span> <span id="res-location" class="font-medium text-slate-200"></span></div>
+                <div><span class="text-slate-500">技能需求:</span> <span id="res-skills" class="font-medium text-slate-200"></span></div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800/80">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">2. 技师匹配与候选时段 (Scheduling)</div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div><span class="text-slate-500">候选技师 ID:</span> <span id="res-techs" class="font-medium text-slate-200"></span></div>
+                <div><span class="text-slate-500">排班状态:</span> <span id="res-sched-status" class="font-medium text-slate-200"></span></div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-amber-950/30 border border-amber-800/40 animate-pulse-slow">
+              <div class="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+                <span>3. 人机协同拦截点 (Human Review Interrupt)</span>
+                <i class="fa-solid fa-pause text-amber-400"></i>
+              </div>
+              <p class="text-xs text-amber-200/80">
+                工作流已在 <code>human_review</code> 节点触发原生 <code>interrupt()</code> 挂起，当前状态已写入 Checkpoint 存储，等待调度员审核。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Operator Dispatcher HITL Console (5 cols) -->
+      <section class="lg:col-span-5 space-y-6">
+        <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-5">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-user-shield text-emerald-400 text-lg"></i>
+              <h2 class="text-lg font-semibold text-white">调度员人机审核台 (HITL)</h2>
+            </div>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-mono">Dispatcher</span>
+          </div>
+
+          <!-- Waiting Review Container -->
+          <div id="hitl-empty" class="text-center py-12 text-slate-500">
+            <i class="fa-solid fa-inbox text-4xl mb-3 text-slate-700"></i>
+            <p class="text-sm">暂无待审核预约建议</p>
+            <p class="text-xs text-slate-600 mt-1">在左侧提交工单后，建议将在此处呈现实时审核卡片</p>
+          </div>
+
+          <div id="hitl-card" class="space-y-4 hidden">
+            <div class="p-4 rounded-xl bg-gradient-to-br from-slate-900 to-slate-900/90 border border-indigo-500/30 shadow-lg">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-indigo-400 flex items-center gap-1">
+                  <i class="fa-solid fa-calendar-check"></i> 建议预约方案 (Proposal)
+                </span>
+                <span id="proposal-req-id" class="text-xs font-mono text-slate-500"></span>
+              </div>
+
+              <div class="space-y-2 text-sm mb-4">
+                <div class="flex justify-between text-xs">
+                  <span class="text-slate-400">指定技师:</span>
+                  <span id="prop-tech-name" class="font-semibold text-white">Ken Tanaka</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-slate-400">预约时间窗:</span>
+                  <span id="prop-time-slot" class="font-mono text-emerald-400 font-medium"></span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-slate-400">关联工单 ID:</span>
+                  <span id="prop-sr-id" class="font-mono text-slate-300">#</span>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-slate-800 flex gap-2">
+                <button onclick="submitApproval('approve')" class="flex-1 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-check"></i>
+                  <span>批准并最终创建预约</span>
+                </button>
+                <button onclick="submitApproval('reject')" class="px-3 py-2 rounded-lg bg-rose-950 hover:bg-rose-900 text-rose-300 font-medium text-xs border border-rose-800/50 transition flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-xmark"></i>
+                  <span>拒绝</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Final State Feedback -->
+            <div id="final-card" class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 hidden">
+              <div class="flex items-center space-x-2 text-emerald-400 font-semibold text-sm mb-2">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>最终预约已原子入库 (Completed)</span>
+              </div>
+              <div class="space-y-1.5 text-xs text-slate-300">
+                <div>预约记录 ID: <span id="final-appt-id" class="font-mono font-bold text-white"></span></div>
+                <div>行级锁排他复检: <span class="text-emerald-400 font-medium">无冲突 (Conflict=False)</span></div>
+                <div>事务发件箱: <span class="text-emerald-400 font-medium">OutboxEvent pending 已入库</span></div>
+                <div>工作流终态: <span class="font-mono text-indigo-300">appointment_created</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Technicians Directory -->
+        <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
+            <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+              <i class="fa-solid fa-users-gear text-slate-400"></i>
+              <span>现场技师资源库 (Technicians)</span>
+            </h3>
+            <span class="text-xs text-slate-500" id="tech-count">加载中...</span>
+          </div>
+          <div id="tech-list" class="space-y-2 text-xs">
+            <div class="text-slate-500">正在获取技师状态...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-600">
+    FieldOps Agent &copy; 2026 — Production Hardened & Deterministic Agent Architecture
+  </footer>
+
+  <script>
+    let currentRequestId = null;
+
+    function updateCharCount() {
+      const val = document.getElementById('service-message').value;
+      const counter = document.getElementById('char-count');
+      counter.innerText = `${val.length} / 2000`;
+      if (val.length > 2000) {
+        counter.classList.add('text-rose-400');
+      } else {
+        counter.classList.remove('text-rose-400');
+      }
+    }
+
+    function fillPreset(type) {
+      if (type === 1) {
+        document.getElementById('service-message').value = "Air conditioner not blowing cold air in Shinjuku tomorrow afternoon";
+      } else if (type === 2) {
+        document.getElementById('service-message').value = "Kitchen pipe burst with severe water leak in Shinjuku urgent";
+      } else if (type === 3) {
+        document.getElementById('service-message').value = "Main circuit breaker keeps tripping in Yokohama tomorrow morning";
+      }
+      updateCharCount();
+    }
+
+    async function pingSystem() {
+      try {
+        const res = await fetch('/ready');
+        const data = await res.json();
+        const badge = document.getElementById('sys-status');
+        if (data.status === 'ok') {
+          badge.innerText = 'Ready & Healthy';
+          badge.className = 'font-medium text-xs text-emerald-400';
+        } else {
+          badge.innerText = `Degraded (${data.status})`;
+          badge.className = 'font-medium text-xs text-amber-400';
+        }
+      } catch (err) {
+        document.getElementById('sys-status').innerText = 'Offline';
+      }
+      loadTechnicians();
+    }
+
+    async function loadTechnicians() {
+      try {
+        const res = await fetch('/technicians');
+        if (!res.ok) return;
+        const techs = await res.json();
+        document.getElementById('tech-count').innerText = `${techs.length} 位在线技师`;
+        const listEl = document.getElementById('tech-list');
+        listEl.innerHTML = techs.map(t => `
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+            <div>
+              <div class="font-semibold text-slate-200">${t.name} <span class="text-slate-500 font-mono text-[10px]">#${t.id}</span></div>
+              <div class="text-[11px] text-slate-400">${t.service_area} · 技能: ${t.skills.join(', ')}</div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] ${t.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-400'}">${t.status}</span>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    async function submitRequest(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 编排分析中...';
+
+      const payload = {
+        customer_name: document.getElementById('customer-name').value,
+        email: document.getElementById('customer-email').value,
+        phone: document.getElementById('customer-phone').value,
+        message: document.getElementById('service-message').value
+      };
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (document.getElementById('use-idempotency').checked) {
+        headers['Idempotency-Key'] = 'ui-session-' + Date.now();
+      }
+
+      try {
+        const res = await fetch('/service-requests', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          alert('提交失败: ' + (data.detail || JSON.stringify(data)));
+          return;
+        }
+
+        currentRequestId = data.request_id;
+
+        // Populate workflow visualizer
+        document.getElementById('workflow-card').classList.remove('hidden');
+        document.getElementById('res-type').innerText = data.service_type || '-';
+        document.getElementById('res-urgency').innerText = data.urgency || '-';
+        document.getElementById('res-location').innerText = data.location || '-';
+        document.getElementById('res-skills').innerText = (data.required_skills || []).join(', ') || '-';
+        document.getElementById('res-techs').innerText = (data.candidate_technician_ids || []).join(', ') || '无';
+        document.getElementById('res-sched-status').innerText = data.scheduling_status || '-';
+        document.getElementById('workflow-badge').innerText = data.workflow_status;
+
+        // Populate HITL Card
+        if (data.workflow_status === 'waiting_for_approval' && data.appointment_proposal) {
+          document.getElementById('hitl-empty').classList.add('hidden');
+          document.getElementById('hitl-card').classList.remove('hidden');
+          document.getElementById('final-card').classList.add('hidden');
+
+          document.getElementById('proposal-req-id').innerText = data.request_id.substring(0, 8) + '...';
+          document.getElementById('prop-tech-name').innerText = data.appointment_proposal.technician_name || '技师 #' + data.appointment_proposal.technician_id;
+          document.getElementById('prop-time-slot').innerText = `${data.appointment_proposal.start_time.replace('T', ' ')} 至 ${data.appointment_proposal.end_time.replace('T', ' ')}`;
+          document.getElementById('prop-sr-id').innerText = '#' + data.service_request_id;
+        }
+
+      } catch (err) {
+        alert('网络错误: ' + err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 启动 AI 调度编排';
+      }
+    }
+
+    async function submitApproval(decision) {
+      if (!currentRequestId) return;
+      try {
+        const res = await fetch(`/service-requests/${currentRequestId}/approval`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ decision: decision })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert('审批失败: ' + (data.detail || JSON.stringify(data)));
+          return;
+        }
+
+        if (decision === 'approve') {
+          document.getElementById('final-card').classList.remove('hidden');
+          document.getElementById('final-appt-id').innerText = '#' + (data.appointment_id || '-');
+          document.getElementById('workflow-badge').innerText = data.workflow_status;
+          document.getElementById('workflow-badge').className = 'px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        } else {
+          alert('工单已拒绝并标记完成。');
+          document.getElementById('hitl-card').classList.add('hidden');
+          document.getElementById('hitl-empty').classList.remove('hidden');
+        }
+      } catch (err) {
+        alert('审批执行失败: ' + err);
+      }
+    }
+
+    // Init
+    updateCharCount();
+    pingSystem();
+  </script>
+</body>
+</html>

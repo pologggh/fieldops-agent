@@ -1,0 +1,114 @@
+[
+  {
+    "id": "match_case_01",
+    "description": "Standard Shinjuku HVAC match",
+    "location": "Shinjuku",
+    "required_skills": ["HVAC"],
+    "expected_status": "matched",
+    "expected_candidate_names": ["Ken Tanaka"]
+  },
+  {
+    "id": "match_case_02",
+    "description": "Standard Shinjuku Plumbing match",
+    "location": "Shinjuku",
+    "required_skills": ["Plumbing"],
+    "expected_status": "matched",
+    "expected_candidate_names": ["Yuki Sato"]
+  },
+  {
+    "id": "match_case_03",
+    "description": "Standard Yokohama single skill HVAC",
+    "location": "Yokohama",
+    "required_skills": ["HVAC"],
+    "expected_status": "matched",
+    "expected_candidate_names": ["Haru Suzuki"]
+  },
+  {
+    "id": "match_case_04",
+    "description": "Standard Yokohama single skill Electrical",
+    "location": "Yokohama",
+    "required_skills": ["Electrical"],
+    "expected_status": "matched",
+    "expected_candidate_names": ["Haru Suzuki"]
+  },
+  {
+    "id": "match_case_05",
+    "description": "Yokohama dual skill requirement satisfied by Haru Suzuki",
+    "location": "Yokohama",
+    "required_skills": ["HVAC", "Electrical"],
+    "expected_status": "matched",
+    "expected_candidate_names": ["Haru Suzuki"]
+  },
+  {
+    "id": "match_case_06",
+    "description": "Shinjuku dual skill requirement not satisfied by any single technician",
+    "location": "Shinjuku",
+    "required_skills": ["HVAC", "Electrical"],
+    "expected_status": "no_candidates",
+    "expected_candidate_names": []
+  },
+  {
+    "id": "match_case_07",
+    "description": "Unserviced geographical area",
+    "location": "Shibuya",
+    "required_skills": ["HVAC"],
+    "expected_status": "no_candidates",
+    "expected_candidate_names": []
+  },
+  {
+    "id": "match_case_08",
+    "description": "Unserviced skill requirement in serviced area",
+    "location": "Shinjuku",
+    "required_skills": ["Networking"],
+    "expected_status": "no_candidates",
+    "expected_candidate_names": []
+  },
+  {
+    "id": "match_case_09",
+    "description": "Missing location (None) halts matching",
+    "location": null,
+    "required_skills": ["HVAC"],
+    "expected_status": "needs_location",
+    "expected_candidate_names": []
+  },
+  {
+    "id": "match_case_10",
+    "description": "Empty string location halts matching",
+    "location": "   ",
+    "required_skills": ["Plumbing"],
+    "expected_status": "needs_location",
+    "expected_candidate_names": []
+  },
+  {
+    "id": "match_case_11",
+    "description": "Missing required skills (None) halts matching",
+    "location": "Shinjuku",
+    "required_skills": null,
+    "expected_status": "needs_skill_information",
+    "expected_candidate_names": []
+  },
+  {
+    "id": "match_case_12",
+    "description": "Empty required skills list halts matching",
+    "location": "Shinjuku",
+    "required_skills": [],
+    "expected_status": "needs_skill_information",
+    "expected_candidate_names": []
+  },
+  {
+    "id": "match_case_13",
+    "description": "Case insensitive normalization for location and skills",
+    "location": "SHINJUKU",
+    "required_skills": ["hvac"],
+    "expected_status": "matched",
+    "expected_candidate_names": ["Ken Tanaka"]
+  },
+  {
+    "id": "match_case_14",
+    "description": "Whitespace trimming normalization",
+    "location": "  Yokohama  ",
+    "required_skills": ["  Electrical  "],
+    "expected_status": "matched",
+    "expected_candidate_names": ["Haru Suzuki"]
+  }
+]

@@ -1,0 +1,79 @@
+[
+  {
+    "id": "sched_case_01",
+    "description": "Completely disjoint prior appointment (existing ends before proposed starts)",
+    "proposed": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00"},
+    "existing": {"start": "2026-09-06T10:00:00+09:00", "end": "2026-09-06T12:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": false
+  },
+  {
+    "id": "sched_case_02",
+    "description": "Completely disjoint subsequent appointment (existing starts after proposed ends)",
+    "proposed": {"start": "2026-09-06T10:00:00+09:00", "end": "2026-09-06T12:00:00+09:00"},
+    "existing": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": false
+  },
+  {
+    "id": "sched_case_03",
+    "description": "Adjacent boundary prior slot (existing ends exactly when proposed starts)",
+    "proposed": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00"},
+    "existing": {"start": "2026-09-06T12:00:00+09:00", "end": "2026-09-06T14:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": false
+  },
+  {
+    "id": "sched_case_04",
+    "description": "Adjacent boundary subsequent slot (proposed ends exactly when existing starts)",
+    "proposed": {"start": "2026-09-06T12:00:00+09:00", "end": "2026-09-06T14:00:00+09:00"},
+    "existing": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": false
+  },
+  {
+    "id": "sched_case_05",
+    "description": "Partial overlap: existing starts before and overlaps into proposed start",
+    "proposed": {"start": "2026-09-06T13:00:00+09:00", "end": "2026-09-06T15:00:00+09:00"},
+    "existing": {"start": "2026-09-06T12:00:00+09:00", "end": "2026-09-06T14:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": true
+  },
+  {
+    "id": "sched_case_06",
+    "description": "Partial overlap: existing starts during and extends past proposed end",
+    "proposed": {"start": "2026-09-06T13:00:00+09:00", "end": "2026-09-06T15:00:00+09:00"},
+    "existing": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": true
+  },
+  {
+    "id": "sched_case_07",
+    "description": "Enclosing overlap: proposed is fully contained within existing window",
+    "proposed": {"start": "2026-09-06T13:00:00+09:00", "end": "2026-09-06T14:00:00+09:00"},
+    "existing": {"start": "2026-09-06T12:00:00+09:00", "end": "2026-09-06T16:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": true
+  },
+  {
+    "id": "sched_case_08",
+    "description": "Enclosing overlap: existing is fully contained within proposed window",
+    "proposed": {"start": "2026-09-06T12:00:00+09:00", "end": "2026-09-06T16:00:00+09:00"},
+    "existing": {"start": "2026-09-06T13:00:00+09:00", "end": "2026-09-06T14:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": true
+  },
+  {
+    "id": "sched_case_09",
+    "description": "Identical overlap: exact same start and end timestamps",
+    "proposed": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00"},
+    "existing": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": true
+  },
+  {
+    "id": "sched_case_10",
+    "description": "Cancelled status appointment in exact same slot does not block",
+    "proposed": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00"},
+    "existing": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00", "status": "cancelled"},
+    "expected_conflict": false
+  },
+  {
+    "id": "sched_case_11",
+    "description": "Cross timezone normalization (UTC vs Asia/Tokyo +09:00)",
+    "proposed": {"start": "2026-09-06T05:00:00Z", "end": "2026-09-06T07:00:00Z"},
+    "existing": {"start": "2026-09-06T14:00:00+09:00", "end": "2026-09-06T16:00:00+09:00", "status": "scheduled"},
+    "expected_conflict": true
+  }
+]

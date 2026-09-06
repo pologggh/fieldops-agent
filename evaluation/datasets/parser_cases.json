@@ -1,0 +1,386 @@
+[
+  {
+    "id": "parser_case_01",
+    "category": "hvac_standard",
+    "message": "My AC is not cooling. I'm in Shinjuku and need someone tomorrow afternoon.",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "preferred_time": "tomorrow afternoon"
+    }
+  },
+  {
+    "id": "parser_case_02",
+    "category": "plumbing_standard",
+    "message": "Water is leaking under my kitchen sink. I'm in Shinjuku and need someone this morning.",
+    "expected": {
+      "service_type": "Plumbing",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["Plumbing"],
+      "preferred_time": "this morning"
+    }
+  },
+  {
+    "id": "parser_case_03",
+    "category": "electrical_emergency",
+    "message": "There are sparks coming from the wall outlet in my bedroom in Shinjuku! Send someone immediately.",
+    "expected": {
+      "service_type": "Electrical",
+      "urgency": "emergency",
+      "location": "Shinjuku",
+      "required_skills": ["Electrical"],
+      "preferred_time": "immediately"
+    }
+  },
+  {
+    "id": "parser_case_04",
+    "category": "networking_standard",
+    "message": "Our office internet keeps disconnecting and router is flashing orange. We are in Shibuya.",
+    "expected": {
+      "service_type": "Networking",
+      "urgency": "medium",
+      "location": "Shibuya",
+      "required_skills": ["Networking"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_05",
+    "category": "appliance_standard",
+    "message": "My refrigerator is not cooling properly and food is spoiling in Shinjuku. Available tomorrow morning.",
+    "expected": {
+      "service_type": "Appliance Repair",
+      "urgency": "high",
+      "location": "Shinjuku",
+      "required_skills": ["Appliance Repair"],
+      "preferred_time": "tomorrow morning"
+    }
+  },
+  {
+    "id": "parser_case_06",
+    "category": "missing_location",
+    "message": "The central heating is blowing cold air. Need a technician tomorrow afternoon.",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "medium",
+      "location": null,
+      "required_skills": ["HVAC"],
+      "preferred_time": "tomorrow afternoon"
+    }
+  },
+  {
+    "id": "parser_case_07",
+    "category": "missing_time",
+    "message": "Bathroom pipe is dripping slowly in Shinjuku.",
+    "expected": {
+      "service_type": "Plumbing",
+      "urgency": "low",
+      "location": "Shinjuku",
+      "required_skills": ["Plumbing"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_08",
+    "category": "missing_location_and_time",
+    "message": "Circuit breaker trips whenever I turn on the microwave.",
+    "expected": {
+      "service_type": "Electrical",
+      "urgency": "medium",
+      "location": null,
+      "required_skills": ["Electrical"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_09",
+    "category": "ultra_short_hvac",
+    "message": "AC broken",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "medium",
+      "location": null,
+      "required_skills": ["HVAC"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_10",
+    "category": "ultra_short_plumbing",
+    "message": "Water leak",
+    "expected": {
+      "service_type": "Plumbing",
+      "urgency": "medium",
+      "location": null,
+      "required_skills": ["Plumbing"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_11",
+    "category": "colloquial_hvac",
+    "message": "Hey folks, my AC is blowing warm air and it's roasting in here! Located in Shinjuku, can someone swing by this afternoon?",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "high",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "preferred_time": "this afternoon"
+    }
+  },
+  {
+    "id": "parser_case_12",
+    "category": "colloquial_plumbing",
+    "message": "Kitchen sink is gurgling like crazy and dirty water is backing up into the basin in Shinjuku.",
+    "expected": {
+      "service_type": "Plumbing",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["Plumbing"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_13",
+    "category": "multi_skill",
+    "message": "AC unit stopped working and there is also water dripping from the ceiling pipe in Shinjuku tomorrow.",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "high",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC", "Plumbing"],
+      "preferred_time": "tomorrow"
+    }
+  },
+  {
+    "id": "parser_case_14",
+    "category": "multi_skill_electrical",
+    "message": "Power outlet sparked and now the AC won't turn on in Yokohama.",
+    "expected": {
+      "service_type": "Electrical",
+      "urgency": "high",
+      "location": "Yokohama",
+      "required_skills": ["Electrical", "HVAC"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_15",
+    "category": "emergency_burning_smell",
+    "message": "AC unit is smoking and there is an intense burning smell in my Shinjuku apartment! Need help right now!",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "emergency",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "preferred_time": "right now"
+    }
+  },
+  {
+    "id": "parser_case_16",
+    "category": "emergency_flooding",
+    "message": "Major water pipe burst in the bathroom and flooding the apartment in Shinjuku! Please hurry!",
+    "expected": {
+      "service_type": "Plumbing",
+      "urgency": "emergency",
+      "location": "Shinjuku",
+      "required_skills": ["Plumbing"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_17",
+    "category": "emergency_electrical_smoke",
+    "message": "Main electrical breaker is sizzling with visible sparks and smoke. Shinjuku location.",
+    "expected": {
+      "service_type": "Electrical",
+      "urgency": "emergency",
+      "location": "Shinjuku",
+      "required_skills": ["Electrical"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_18",
+    "category": "non_emergency_routine",
+    "message": "Looking to schedule a routine AC seasonal filter check in Shinjuku sometime next week.",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "low",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "preferred_time": "sometime next week"
+    }
+  },
+  {
+    "id": "parser_case_19",
+    "category": "non_emergency_inspection",
+    "message": "Annual water pressure inspection for our residential unit in Yokohama. No rush.",
+    "expected": {
+      "service_type": "Plumbing",
+      "urgency": "low",
+      "location": "Yokohama",
+      "required_skills": ["Plumbing"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_20",
+    "category": "other_handyman",
+    "message": "Need someone to help mount a TV bracket and assemble IKEA furniture in Shinjuku.",
+    "expected": {
+      "service_type": "Other",
+      "urgency": "low",
+      "location": "Shinjuku",
+      "required_skills": [],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_21",
+    "category": "other_painting",
+    "message": "Drywall patching and painting work needed after remodeling in Shibuya.",
+    "expected": {
+      "service_type": "Other",
+      "urgency": "low",
+      "location": "Shibuya",
+      "required_skills": [],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_22",
+    "category": "location_distractor",
+    "message": "I used to live in Kyoto, but at my new home in Shinjuku the air conditioning stopped working today.",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "preferred_time": "today"
+    }
+  },
+  {
+    "id": "parser_case_23",
+    "category": "time_phrasing_preservation",
+    "message": "Can someone inspect my noisy water heater in Shinjuku right after lunch today?",
+    "expected": {
+      "service_type": "Plumbing",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["Plumbing"],
+      "preferred_time": "right after lunch today"
+    }
+  },
+  {
+    "id": "parser_case_24",
+    "category": "time_phrasing_preservation",
+    "message": "Need an electrician to install a new ceiling fixture in Yokohama this Friday morning.",
+    "expected": {
+      "service_type": "Electrical",
+      "urgency": "low",
+      "location": "Yokohama",
+      "required_skills": ["Electrical"],
+      "preferred_time": "this Friday morning"
+    }
+  },
+  {
+    "id": "parser_case_25",
+    "category": "appliance_dishwasher",
+    "message": "Built-in dishwasher is showing error code E15 and won't finish cycle. Located in Shinjuku.",
+    "expected": {
+      "service_type": "Appliance Repair",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["Appliance Repair"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_26",
+    "category": "networking_office",
+    "message": "Ethernet switch in server room is dead and office LAN is completely down in Shinjuku tomorrow morning.",
+    "expected": {
+      "service_type": "Networking",
+      "urgency": "high",
+      "location": "Shinjuku",
+      "required_skills": ["Networking"],
+      "preferred_time": "tomorrow morning"
+    }
+  },
+  {
+    "id": "parser_case_27",
+    "category": "electrical_switch",
+    "message": "Bathroom light switch makes a crackling buzzing noise whenever toggled on. Shinjuku area.",
+    "expected": {
+      "service_type": "Electrical",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["Electrical"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_28",
+    "category": "plumbing_toilet",
+    "message": "Toilet is clogged and overflowing onto the bathroom floor in Shinjuku.",
+    "expected": {
+      "service_type": "Plumbing",
+      "urgency": "high",
+      "location": "Shinjuku",
+      "required_skills": ["Plumbing"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_29",
+    "category": "hvac_furnace",
+    "message": "Furnace pilot light keeps extinguishing in Yokohama, no heat in the house.",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "high",
+      "location": "Yokohama",
+      "required_skills": ["HVAC"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_30",
+    "category": "company_name_distractor",
+    "message": "This is Tokyo Shibuya Trading Co, calling for our branch store in Shinjuku where the AC is leaking water.",
+    "expected": {
+      "service_type": "HVAC",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "preferred_time": null
+    }
+  },
+  {
+    "id": "parser_case_31",
+    "category": "appliance_washing_machine",
+    "message": "Washing machine won't spin and makes loud grinding noise in Shinjuku this evening.",
+    "expected": {
+      "service_type": "Appliance Repair",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["Appliance Repair"],
+      "preferred_time": "this evening"
+    }
+  },
+  {
+    "id": "parser_case_32",
+    "category": "ultra_short_power",
+    "message": "No power",
+    "expected": {
+      "service_type": "Electrical",
+      "urgency": "high",
+      "location": null,
+      "required_skills": ["Electrical"],
+      "preferred_time": null
+    }
+  }
+]

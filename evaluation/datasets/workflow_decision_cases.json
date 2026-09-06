@@ -1,0 +1,192 @@
+[
+  {
+    "id": "case_01_valid_request",
+    "description": "Standard complete request routed successfully through intake and dispatch to operator proposal review.",
+    "input": {
+      "service_type": "HVAC",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "preferred_time": "tomorrow morning",
+      "required_skills": ["HVAC"]
+    },
+    "expected_action": "wait_for_approval",
+    "expected_route": "build_appointment_proposal",
+    "expected_role": "operator",
+    "expected_reason_code": "PROPOSAL_READY"
+  },
+  {
+    "id": "case_02_missing_location",
+    "description": "Request with valid service type but missing location is routed to technician matching to determine location requirement.",
+    "input": {
+      "service_type": "Plumbing",
+      "urgency": "medium",
+      "location": null,
+      "preferred_time": "tomorrow afternoon",
+      "required_skills": ["Plumbing"]
+    },
+    "expected_action": "dispatch",
+    "expected_route": "dispatch_subgraph",
+    "expected_reason_code": "MISSING_LOCATION"
+  },
+  {
+    "id": "case_03_missing_time",
+    "description": "Request with ambiguous or missing preferred time causes scheduling to require clarification.",
+    "input": {
+      "service_type": "Electrical",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "preferred_time": "sometime next month maybe",
+      "required_skills": ["Electrical"]
+    },
+    "expected_action": "ask_for_information",
+    "expected_route": "end",
+    "expected_reason_code": "MISSING_TIME"
+  },
+  {
+    "id": "case_04_no_technician",
+    "description": "No technician available possessing specialized skills in the target zone escalates to operations.",
+    "input": {
+      "service_type": "Appliance Repair",
+      "urgency": "high",
+      "location": "Remote Island Zone",
+      "preferred_time": "tomorrow morning",
+      "required_skills": ["Appliance Repair"]
+    },
+    "expected_action": "escalate",
+    "expected_route": "escalation_subgraph",
+    "expected_role": "operator",
+    "expected_reason_code": "NO_ELIGIBLE_TECHNICIAN"
+  },
+  {
+    "id": "case_05_sla_impossible",
+    "description": "High urgency request where candidate technicians cannot arrive within SLA window triggers SLA escalation.",
+    "input": {
+      "service_type": "HVAC",
+      "urgency": "high",
+      "location": "Shinjuku",
+      "preferred_time": "tomorrow morning",
+      "required_skills": ["HVAC"],
+      "sla_feasible": false
+    },
+    "expected_action": "escalate",
+    "expected_route": "escalation_subgraph",
+    "expected_role": "senior_operator",
+    "expected_reason_code": "SLA_CANNOT_BE_MET"
+  },
+  {
+    "id": "case_06_appointment_conflict",
+    "description": "Finalization detects simultaneous race booking on the same technician slot; routes to rescheduling.",
+    "input": {
+      "error_type": "appointment_conflict",
+      "is_side_effect_safe": true
+    },
+    "expected_action": "reschedule",
+    "expected_route": "reschedule_subgraph",
+    "expected_reason_code": "APPOINTMENT_CONFLICT"
+  },
+  {
+    "id": "case_07_llm_timeout",
+    "description": "Transient LLM provider timeout is classified as retryable within retry budget.",
+    "input": {
+      "error_type": "llm_timeout",
+      "attempt_count": 1,
+      "retry_budget": 3,
+      "is_side_effect_safe": true
+    },
+    "expected_action": "retry",
+    "expected_retryable": true,
+    "expected_reason_code": "TRANSIENT_INFRASTRUCTURE_FAILURE"
+  },
+  {
+    "id": "case_08_google_calendar_temporary_failure",
+    "description": "Auxiliary Google Calendar synchronization 503 does not rollback core appointment; schedules async recovery.",
+    "input": {
+      "error_type": "calendar_sync_transient",
+      "is_side_effect_safe": true
+    },
+    "expected_action": "continue",
+    "expected_retryable": true,
+    "expected_reason_code": "INTEGRATION_RECOVERY_REQUIRED"
+  },
+  {
+    "id": "case_09_google_calendar_auth_failure",
+    "description": "Google Calendar 401 permanent authorization failure routes to administrator intervention queue.",
+    "input": {
+      "error_type": "calendar_auth_failed",
+      "is_side_effect_safe": false
+    },
+    "expected_action": "require_human",
+    "expected_role": "admin",
+    "expected_reason_code": "INTEGRATION_AUTH_FAILURE"
+  },
+  {
+    "id": "case_10_emergency_overtime",
+    "description": "Emergency service ticket scheduled off-hours/weekend requires elevated Senior Operator review.",
+    "input": {
+      "service_type": "HVAC",
+      "urgency": "emergency",
+      "start_time": "2026-09-06T20:00:00+09:00",
+      "end_time": "2026-09-06T22:00:00+09:00"
+    },
+    "expected_action": "wait_for_approval",
+    "expected_role": "senior_operator",
+    "expected_reason_code": "EMERGENCY_REQUIRES_ELEVATED_APPROVAL"
+  },
+  {
+    "id": "case_11_repeated_clarification",
+    "description": "Customer unable to provide mandatory fields after 3 attempts triggers human-assisted intake escalation.",
+    "input": {
+      "workflow_status": "needs_information",
+      "validation_errors": ["service_type is missing"],
+      "service_type": null,
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "clarification_count": 3
+    },
+    "expected_action": "escalate",
+    "expected_route": "escalation_subgraph",
+    "expected_role": "operator",
+    "expected_reason_code": "CLARIFICATION_LIMIT_EXCEEDED"
+  },
+  {
+    "id": "case_12_repeated_reschedule",
+    "description": "Appointment fails booking 3 consecutive times due to slots exhaustion; escalates to Senior Operator.",
+    "input": {
+      "reschedule_count": 3,
+      "urgency": "high"
+    },
+    "expected_action": "escalate",
+    "expected_role": "senior_operator",
+    "expected_reason_code": "RESCHEDULE_LIMIT_EXCEEDED"
+  },
+  {
+    "id": "case_13_illegal_transition_completed_to_dispatch",
+    "description": "Attempted backward transition from completed appointment to dispatching must be rejected by transition guard.",
+    "input": {
+      "current_status": "completed",
+      "target_status": "ready_for_scheduling"
+    },
+    "expected_valid": false,
+    "expected_error": "WorkflowInvariantError"
+  },
+  {
+    "id": "case_14_illegal_transition_cancelled_to_approval",
+    "description": "Attempted transition from cancelled appointment to waiting_for_approval must be rejected.",
+    "input": {
+      "current_status": "cancelled",
+      "target_status": "waiting_for_approval"
+    },
+    "expected_valid": false,
+    "expected_error": "WorkflowInvariantError"
+  },
+  {
+    "id": "case_15_loop_protection_max_steps",
+    "description": "Workflow execution exceeding MAX_WORKFLOW_STEPS (25) triggers loop protection invariant violation.",
+    "input": {
+      "step_count": 26,
+      "workflow_status": "ready_for_scheduling"
+    },
+    "expected_valid": false,
+    "expected_error": "WorkflowInvariantError"
+  }
+]

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "wf_case_01",
+    "description": "Happy path: valid request -> matched -> proposal -> approve -> appointment_created",
+    "parsed_input": {
+      "service_type": "HVAC",
+      "urgency": "high",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "preferred_time": "tomorrow afternoon",
+      "problem_description": "AC blowing hot air"
+    },
+    "customer": {
+      "name": "Alice",
+      "email": "alice.wf1@example.com",
+      "phone": "090-1111-2222"
+    },
+    "operator_decision": "approve",
+    "precondition_booking": null,
+    "expected_workflow_status": "appointment_created",
+    "expected_approval_status": "approved",
+    "expected_appointment_created": true
+  },
+  {
+    "id": "wf_case_02",
+    "description": "Missing location stops pipeline at validation node",
+    "parsed_input": {
+      "service_type": "HVAC",
+      "urgency": "high",
+      "location": null,
+      "required_skills": ["HVAC"],
+      "preferred_time": "tomorrow afternoon",
+      "problem_description": "AC unit broken"
+    },
+    "customer": {
+      "name": "Bob",
+      "email": "bob.wf2@example.com",
+      "phone": "090-3333-4444"
+    },
+    "operator_decision": null,
+    "precondition_booking": null,
+    "expected_workflow_status": "needs_location",
+    "expected_approval_status": null,
+    "expected_appointment_created": false
+  },
+  {
+    "id": "wf_case_03",
+    "description": "Unserviced location halts pipeline at matching node",
+    "parsed_input": {
+      "service_type": "HVAC",
+      "urgency": "medium",
+      "location": "Sapporo",
+      "required_skills": ["HVAC"],
+      "preferred_time": "tomorrow afternoon",
+      "problem_description": "AC inspection"
+    },
+    "customer": {
+      "name": "Charlie",
+      "email": "charlie.wf3@example.com",
+      "phone": "090-5555-6666"
+    },
+    "operator_decision": null,
+    "precondition_booking": null,
+    "expected_workflow_status": "no_technician_available",
+    "expected_approval_status": null,
+    "expected_appointment_created": false
+  },
+  {
+    "id": "wf_case_04",
+    "description": "Operator rejects proposal transitioning workflow to rejected",
+    "parsed_input": {
+      "service_type": "Plumbing",
+      "urgency": "medium",
+      "location": "Shinjuku",
+      "required_skills": ["Plumbing"],
+      "preferred_time": "tomorrow afternoon",
+      "problem_description": "Kitchen pipe leaking"
+    },
+    "customer": {
+      "name": "David",
+      "email": "david.wf4@example.com",
+      "phone": "090-7777-8888"
+    },
+    "operator_decision": "reject",
+    "precondition_booking": null,
+    "expected_workflow_status": "rejected",
+    "expected_approval_status": "rejected",
+    "expected_appointment_created": false
+  },
+  {
+    "id": "wf_case_05",
+    "description": "Pre-booked conflict before approval halts with needs_rescheduling",
+    "parsed_input": {
+      "service_type": "HVAC",
+      "urgency": "high",
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "preferred_time": "tomorrow afternoon",
+      "problem_description": "AC burning smell"
+    },
+    "customer": {
+      "name": "Eve",
+      "email": "eve.wf5@example.com",
+      "phone": "090-9999-0000"
+    },
+    "operator_decision": "approve",
+    "precondition_booking": "conflict_proposed_slot",
+    "expected_workflow_status": "needs_rescheduling",
+    "expected_approval_status": "approved",
+    "expected_appointment_created": false
+  }
+]

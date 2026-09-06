@@ -1,0 +1,353 @@
+{
+  "total_cases": 32,
+  "total_hard_constraint_checks": 175,
+  "hard_constraint_violations": 0,
+  "hard_constraint_violation_rate": 0.0,
+  "matching_status_accuracy": 100.0,
+  "candidate_set_accuracy": 100.0,
+  "recommendation_accuracy": 100.0,
+  "soft_constraint_adherence": 100.0,
+  "cases": [
+    {
+      "case_id": "dispatch_01_exact_single_match",
+      "name": "Exact Single Technician Match",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        1
+      ],
+      "recommended_technician_id": 1,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_02_tie_breaker_lowest_id",
+      "name": "Tie Breaker Lowest Tech ID on Same Earliest Slot",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        2,
+        5
+      ],
+      "recommended_technician_id": 2,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_03_inactive_excluded",
+      "name": "Inactive Technician Excluded",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        3
+      ],
+      "recommended_technician_id": 3,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_04_all_inactive_no_candidates",
+      "name": "All Technicians Inactive Returns No Candidates",
+      "passed": true,
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_05_multi_skill_partial_match_excluded",
+      "name": "Multi-skill Requirement Excludes Partial Skill Tech",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        7
+      ],
+      "recommended_technician_id": 7,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_06_area_mismatch_excluded",
+      "name": "Technician in Different Area Excluded",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        9
+      ],
+      "recommended_technician_id": 9,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_07_case_insensitive_area",
+      "name": "Case-insensitive Service Area Matching",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        10
+      ],
+      "recommended_technician_id": 10,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_08_case_insensitive_skill",
+      "name": "Case-insensitive Skill Matching",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        11
+      ],
+      "recommended_technician_id": 11,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_09_missing_location_needs_location",
+      "name": "Missing Location Returns needs_location",
+      "passed": true,
+      "matching_status": "needs_location",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_10_missing_skills_needs_skill_info",
+      "name": "Missing Skills Returns needs_skill_information",
+      "passed": true,
+      "matching_status": "needs_skill_information",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_11_schedule_conflict_shifts_to_free_tech",
+      "name": "Schedule Conflict Shifts Recommendation To Free Tech",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        1,
+        2
+      ],
+      "recommended_technician_id": 2,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_12_all_busy_returns_no_proposal",
+      "name": "All Candidate Technicians Fully Booked in Window",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        14
+      ],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_13_earliest_start_preferred_over_tech_id",
+      "name": "Earliest Available Time Preferred Over Tech ID",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        10,
+        20
+      ],
+      "recommended_technician_id": 20,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_14_back_to_back_non_conflicting",
+      "name": "Back To Back Slot Allowed Without Conflict",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        15
+      ],
+      "recommended_technician_id": 15,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_15_superset_skills_match",
+      "name": "Technician With Superset Skills Qualifies",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        16
+      ],
+      "recommended_technician_id": 16,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_16_partial_overlap_conflict_elimination",
+      "name": "Partial Overlap Eliminates Conflicting Slot",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        17
+      ],
+      "recommended_technician_id": 17,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_17_no_technicians_in_db",
+      "name": "No Technicians Exist in System",
+      "passed": true,
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_18_whitespace_location_needs_location",
+      "name": "Whitespace-only Location Returns needs_location",
+      "passed": true,
+      "matching_status": "needs_location",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_19_whitespace_skills_needs_skill_info",
+      "name": "Whitespace-only Skill List Returns needs_skill_information",
+      "passed": true,
+      "matching_status": "needs_skill_information",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_20_three_candidates_sorted_by_id",
+      "name": "Three Qualifying Candidates Sorted Deterministically",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        10,
+        20,
+        30
+      ],
+      "recommended_technician_id": 10,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_21_gap_filling_appointment",
+      "name": "Slot Found In Two-Hour Gap Between Appointments",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        21
+      ],
+      "recommended_technician_id": 21,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_22_appliance_repair_multi_technician",
+      "name": "Appliance Repair Multi Candidate Selection",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        22,
+        23
+      ],
+      "recommended_technician_id": 22,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_23_emergency_tight_window",
+      "name": "Emergency Tight Two-Hour Window",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        24
+      ],
+      "recommended_technician_id": 24,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_24_general_maintenance_no_skill_overhead",
+      "name": "General Maintenance With Low Skill Requirements",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        25
+      ],
+      "recommended_technician_id": 25,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_25_three_skill_specialist_match",
+      "name": "Three Skill Requirement Matched by Specialist",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        26
+      ],
+      "recommended_technician_id": 26,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_26_afternoon_slot_selected_when_morning_busy",
+      "name": "Afternoon Slot Selected When Morning Booked",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        28
+      ],
+      "recommended_technician_id": 28,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_27_inactive_candidate_never_scheduled",
+      "name": "Inactive Candidate Never Has Appointment Proposed",
+      "passed": true,
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_28_cross_district_isolation",
+      "name": "Cross District Isolation Enforced",
+      "passed": true,
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_29_zero_duration_window_no_slot",
+      "name": "Window Smaller Than Service Duration Yields No Slots",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        33
+      ],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_30_exact_two_hour_slot_fits",
+      "name": "Window Exactly Equals Duration Generates One Slot",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        34
+      ],
+      "recommended_technician_id": 34,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_31_multiple_skills_partial_fail",
+      "name": "Multiple Skills With One Missing Fails Match",
+      "passed": true,
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null,
+      "violations": []
+    },
+    {
+      "case_id": "dispatch_32_complex_multi_technician_dispatch",
+      "name": "Complex Multi-Technician Conflict Resolution",
+      "passed": true,
+      "matching_status": "matched",
+      "candidate_technician_ids": [
+        40,
+        50
+      ],
+      "recommended_technician_id": 40,
+      "violations": []
+    }
+  ]
+}

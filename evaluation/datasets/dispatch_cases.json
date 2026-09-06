@@ -1,0 +1,1005 @@
+[
+  {
+    "id": "dispatch_01_exact_single_match",
+    "name": "Exact Single Technician Match",
+    "request": {
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 1,
+        "name": "Ken Sato",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [1],
+      "recommended_technician_id": 1
+    }
+  },
+  {
+    "id": "dispatch_02_tie_breaker_lowest_id",
+    "name": "Tie Breaker Lowest Tech ID on Same Earliest Slot",
+    "request": {
+      "location": "Shibuya",
+      "required_skills": ["Plumbing"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 5,
+        "name": "Yuki Tanaka",
+        "service_area": "Shibuya",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      },
+      {
+        "id": 2,
+        "name": "Haru Yamada",
+        "service_area": "Shibuya",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [2, 5],
+      "recommended_technician_id": 2
+    }
+  },
+  {
+    "id": "dispatch_03_inactive_excluded",
+    "name": "Inactive Technician Excluded",
+    "request": {
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 1,
+        "name": "Ken Inactive",
+        "service_area": "Shinjuku",
+        "status": "inactive",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      },
+      {
+        "id": 3,
+        "name": "Taro Active",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [3],
+      "recommended_technician_id": 3
+    }
+  },
+  {
+    "id": "dispatch_04_all_inactive_no_candidates",
+    "name": "All Technicians Inactive Returns No Candidates",
+    "request": {
+      "location": "Minato",
+      "required_skills": ["Electrical"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 4,
+        "name": "Edison Inactive",
+        "service_area": "Minato",
+        "status": "inactive",
+        "skills": ["Electrical"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_05_multi_skill_partial_match_excluded",
+    "name": "Multi-skill Requirement Excludes Partial Skill Tech",
+    "request": {
+      "location": "Roppongi",
+      "required_skills": ["HVAC", "Electrical"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 6,
+        "name": "HVAC Only Tech",
+        "service_area": "Roppongi",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      },
+      {
+        "id": 7,
+        "name": "Dual Tech",
+        "service_area": "Roppongi",
+        "status": "active",
+        "skills": ["HVAC", "Electrical", "Plumbing"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [7],
+      "recommended_technician_id": 7
+    }
+  },
+  {
+    "id": "dispatch_06_area_mismatch_excluded",
+    "name": "Technician in Different Area Excluded",
+    "request": {
+      "location": "Yokohama",
+      "required_skills": ["Plumbing"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 8,
+        "name": "Tokyo Tech",
+        "service_area": "Shibuya",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      },
+      {
+        "id": 9,
+        "name": "Yokohama Tech",
+        "service_area": "Yokohama",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [9],
+      "recommended_technician_id": 9
+    }
+  },
+  {
+    "id": "dispatch_07_case_insensitive_area",
+    "name": "Case-insensitive Service Area Matching",
+    "request": {
+      "location": "shinjuku",
+      "required_skills": ["HVAC"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 10,
+        "name": "Ken Sato",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [10],
+      "recommended_technician_id": 10
+    }
+  },
+  {
+    "id": "dispatch_08_case_insensitive_skill",
+    "name": "Case-insensitive Skill Matching",
+    "request": {
+      "location": "Chiyoda",
+      "required_skills": ["hvac"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 11,
+        "name": "Chiyoda Pro",
+        "service_area": "Chiyoda",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [11],
+      "recommended_technician_id": 11
+    }
+  },
+  {
+    "id": "dispatch_09_missing_location_needs_location",
+    "name": "Missing Location Returns needs_location",
+    "request": {
+      "location": null,
+      "required_skills": ["Plumbing"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 12,
+        "name": "Tech Twelve",
+        "service_area": "Shibuya",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "needs_location",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_10_missing_skills_needs_skill_info",
+    "name": "Missing Skills Returns needs_skill_information",
+    "request": {
+      "location": "Shinagawa",
+      "required_skills": [],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 13,
+        "name": "Tech Thirteen",
+        "service_area": "Shinagawa",
+        "status": "active",
+        "skills": ["Networking"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "needs_skill_information",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_11_schedule_conflict_shifts_to_free_tech",
+    "name": "Schedule Conflict Shifts Recommendation To Free Tech",
+    "request": {
+      "location": "Ginza",
+      "required_skills": ["Appliance Repair"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T11:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 1,
+        "name": "Busy Tech",
+        "service_area": "Ginza",
+        "status": "active",
+        "skills": ["Appliance Repair"],
+        "existing_appointments": [
+          {
+            "start_time": "2026-09-10T09:00:00+09:00",
+            "end_time": "2026-09-10T11:00:00+09:00"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Free Tech",
+        "service_area": "Ginza",
+        "status": "active",
+        "skills": ["Appliance Repair"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [1, 2],
+      "recommended_technician_id": 2
+    }
+  },
+  {
+    "id": "dispatch_12_all_busy_returns_no_proposal",
+    "name": "All Candidate Technicians Fully Booked in Window",
+    "request": {
+      "location": "Meguro",
+      "required_skills": ["Electrical"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T11:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 14,
+        "name": "Booked Tech",
+        "service_area": "Meguro",
+        "status": "active",
+        "skills": ["Electrical"],
+        "existing_appointments": [
+          {
+            "start_time": "2026-09-10T08:30:00+09:00",
+            "end_time": "2026-09-10T11:30:00+09:00"
+          }
+        ]
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [14],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_13_earliest_start_preferred_over_tech_id",
+    "name": "Earliest Available Time Preferred Over Tech ID",
+    "request": {
+      "location": "Ueno",
+      "required_skills": ["Plumbing"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T14:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 10,
+        "name": "Tech Ten",
+        "service_area": "Ueno",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": [
+          {
+            "start_time": "2026-09-10T09:00:00+09:00",
+            "end_time": "2026-09-10T11:00:00+09:00"
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "name": "Tech Twenty",
+        "service_area": "Ueno",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [10, 20],
+      "recommended_technician_id": 20
+    }
+  },
+  {
+    "id": "dispatch_14_back_to_back_non_conflicting",
+    "name": "Back To Back Slot Allowed Without Conflict",
+    "request": {
+      "location": "Ikebukuro",
+      "required_skills": ["Networking"],
+      "window": {
+        "start_time": "2026-09-10T11:00:00+09:00",
+        "end_time": "2026-09-10T13:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 15,
+        "name": "Tech Net",
+        "service_area": "Ikebukuro",
+        "status": "active",
+        "skills": ["Networking"],
+        "existing_appointments": [
+          {
+            "start_time": "2026-09-10T09:00:00+09:00",
+            "end_time": "2026-09-10T11:00:00+09:00"
+          }
+        ]
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [15],
+      "recommended_technician_id": 15
+    }
+  },
+  {
+    "id": "dispatch_15_superset_skills_match",
+    "name": "Technician With Superset Skills Qualifies",
+    "request": {
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 16,
+        "name": "Master Tech",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["HVAC", "Electrical", "Plumbing", "Networking"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [16],
+      "recommended_technician_id": 16
+    }
+  },
+  {
+    "id": "dispatch_16_partial_overlap_conflict_elimination",
+    "name": "Partial Overlap Eliminates Conflicting Slot",
+    "request": {
+      "location": "Minato",
+      "required_skills": ["HVAC"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T13:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 17,
+        "name": "Tech Seventeen",
+        "service_area": "Minato",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": [
+          {
+            "start_time": "2026-09-10T09:30:00+09:00",
+            "end_time": "2026-09-10T10:30:00+09:00"
+          }
+        ]
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [17],
+      "recommended_technician_id": 17
+    }
+  },
+  {
+    "id": "dispatch_17_no_technicians_in_db",
+    "name": "No Technicians Exist in System",
+    "request": {
+      "location": "Shibuya",
+      "required_skills": ["Plumbing"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [],
+    "expected": {
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_18_whitespace_location_needs_location",
+    "name": "Whitespace-only Location Returns needs_location",
+    "request": {
+      "location": "   ",
+      "required_skills": ["Plumbing"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 18,
+        "name": "Plumber Eighteen",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "needs_location",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_19_whitespace_skills_needs_skill_info",
+    "name": "Whitespace-only Skill List Returns needs_skill_information",
+    "request": {
+      "location": "Shinjuku",
+      "required_skills": ["  ", ""],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 19,
+        "name": "Tech Nineteen",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "needs_skill_information",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_20_three_candidates_sorted_by_id",
+    "name": "Three Qualifying Candidates Sorted Deterministically",
+    "request": {
+      "location": "Roppongi",
+      "required_skills": ["Electrical"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 30,
+        "name": "Third Tech",
+        "service_area": "Roppongi",
+        "status": "active",
+        "skills": ["Electrical"],
+        "existing_appointments": []
+      },
+      {
+        "id": 10,
+        "name": "First Tech",
+        "service_area": "Roppongi",
+        "status": "active",
+        "skills": ["Electrical"],
+        "existing_appointments": []
+      },
+      {
+        "id": 20,
+        "name": "Second Tech",
+        "service_area": "Roppongi",
+        "status": "active",
+        "skills": ["Electrical"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [10, 20, 30],
+      "recommended_technician_id": 10
+    }
+  },
+  {
+    "id": "dispatch_21_gap_filling_appointment",
+    "name": "Slot Found In Two-Hour Gap Between Appointments",
+    "request": {
+      "location": "Shinagawa",
+      "required_skills": ["Networking"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T18:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 21,
+        "name": "Gap Tech",
+        "service_area": "Shinagawa",
+        "status": "active",
+        "skills": ["Networking"],
+        "existing_appointments": [
+          {
+            "start_time": "2026-09-10T09:00:00+09:00",
+            "end_time": "2026-09-10T11:00:00+09:00"
+          },
+          {
+            "start_time": "2026-09-10T13:00:00+09:00",
+            "end_time": "2026-09-10T15:00:00+09:00"
+          }
+        ]
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [21],
+      "recommended_technician_id": 21
+    }
+  },
+  {
+    "id": "dispatch_22_appliance_repair_multi_technician",
+    "name": "Appliance Repair Multi Candidate Selection",
+    "request": {
+      "location": "Ginza",
+      "required_skills": ["Appliance Repair"],
+      "window": {
+        "start_time": "2026-09-10T10:00:00+09:00",
+        "end_time": "2026-09-10T14:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 22,
+        "name": "Appliance Pro 1",
+        "service_area": "Ginza",
+        "status": "active",
+        "skills": ["Appliance Repair"],
+        "existing_appointments": []
+      },
+      {
+        "id": 23,
+        "name": "Appliance Pro 2",
+        "service_area": "Ginza",
+        "status": "active",
+        "skills": ["Appliance Repair"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [22, 23],
+      "recommended_technician_id": 22
+    }
+  },
+  {
+    "id": "dispatch_23_emergency_tight_window",
+    "name": "Emergency Tight Two-Hour Window",
+    "request": {
+      "location": "Shinjuku",
+      "required_skills": ["Plumbing"],
+      "window": {
+        "start_time": "2026-09-10T14:00:00+09:00",
+        "end_time": "2026-09-10T16:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 24,
+        "name": "Emergency Plumber",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [24],
+      "recommended_technician_id": 24
+    }
+  },
+  {
+    "id": "dispatch_24_general_maintenance_no_skill_overhead",
+    "name": "General Maintenance With Low Skill Requirements",
+    "request": {
+      "location": "Yokohama",
+      "required_skills": ["General Maintenance"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 25,
+        "name": "Handyman Jack",
+        "service_area": "Yokohama",
+        "status": "active",
+        "skills": ["General Maintenance"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [25],
+      "recommended_technician_id": 25
+    }
+  },
+  {
+    "id": "dispatch_25_three_skill_specialist_match",
+    "name": "Three Skill Requirement Matched by Specialist",
+    "request": {
+      "location": "Chiyoda",
+      "required_skills": ["Electrical", "HVAC", "Networking"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 26,
+        "name": "Systems Engineer",
+        "service_area": "Chiyoda",
+        "status": "active",
+        "skills": ["Electrical", "HVAC", "Networking", "Plumbing"],
+        "existing_appointments": []
+      },
+      {
+        "id": 27,
+        "name": "Two Skill Tech",
+        "service_area": "Chiyoda",
+        "status": "active",
+        "skills": ["Electrical", "HVAC"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [26],
+      "recommended_technician_id": 26
+    }
+  },
+  {
+    "id": "dispatch_26_afternoon_slot_selected_when_morning_busy",
+    "name": "Afternoon Slot Selected When Morning Booked",
+    "request": {
+      "location": "Shibuya",
+      "required_skills": ["HVAC"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T15:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 28,
+        "name": "Busy Morning Tech",
+        "service_area": "Shibuya",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": [
+          {
+            "start_time": "2026-09-10T09:00:00+09:00",
+            "end_time": "2026-09-10T12:00:00+09:00"
+          }
+        ]
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [28],
+      "recommended_technician_id": 28
+    }
+  },
+  {
+    "id": "dispatch_27_inactive_candidate_never_scheduled",
+    "name": "Inactive Candidate Never Has Appointment Proposed",
+    "request": {
+      "location": "Ueno",
+      "required_skills": ["Networking"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 29,
+        "name": "Inactive Net Tech",
+        "service_area": "Ueno",
+        "status": "inactive",
+        "skills": ["Networking"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_28_cross_district_isolation",
+    "name": "Cross District Isolation Enforced",
+    "request": {
+      "location": "Meguro",
+      "required_skills": ["Electrical"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 31,
+        "name": "Shibuya Tech",
+        "service_area": "Shibuya",
+        "status": "active",
+        "skills": ["Electrical"],
+        "existing_appointments": []
+      },
+      {
+        "id": 32,
+        "name": "Shinjuku Tech",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["Electrical"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_29_zero_duration_window_no_slot",
+    "name": "Window Smaller Than Service Duration Yields No Slots",
+    "request": {
+      "location": "Ginza",
+      "required_skills": ["HVAC"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T09:30:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 33,
+        "name": "Tech Thirty Three",
+        "service_area": "Ginza",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [33],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_30_exact_two_hour_slot_fits",
+    "name": "Window Exactly Equals Duration Generates One Slot",
+    "request": {
+      "location": "Chiyoda",
+      "required_skills": ["Plumbing"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T11:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 34,
+        "name": "Tech Thirty Four",
+        "service_area": "Chiyoda",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [34],
+      "recommended_technician_id": 34
+    }
+  },
+  {
+    "id": "dispatch_31_multiple_skills_partial_fail",
+    "name": "Multiple Skills With One Missing Fails Match",
+    "request": {
+      "location": "Roppongi",
+      "required_skills": ["Plumbing", "Networking"],
+      "window": {
+        "start_time": "2026-09-10T09:00:00+09:00",
+        "end_time": "2026-09-10T12:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 35,
+        "name": "Plumber Only",
+        "service_area": "Roppongi",
+        "status": "active",
+        "skills": ["Plumbing"],
+        "existing_appointments": []
+      },
+      {
+        "id": 36,
+        "name": "Net Tech Only",
+        "service_area": "Roppongi",
+        "status": "active",
+        "skills": ["Networking"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "no_candidates",
+      "candidate_technician_ids": [],
+      "recommended_technician_id": null
+    }
+  },
+  {
+    "id": "dispatch_32_complex_multi_technician_dispatch",
+    "name": "Complex Multi-Technician Conflict Resolution",
+    "request": {
+      "location": "Shinjuku",
+      "required_skills": ["HVAC"],
+      "window": {
+        "start_time": "2026-09-10T10:00:00+09:00",
+        "end_time": "2026-09-10T16:00:00+09:00"
+      }
+    },
+    "technicians": [
+      {
+        "id": 50,
+        "name": "Tech Fifty",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": [
+          {
+            "start_time": "2026-09-10T10:00:00+09:00",
+            "end_time": "2026-09-10T12:00:00+09:00"
+          }
+        ]
+      },
+      {
+        "id": 40,
+        "name": "Tech Forty",
+        "service_area": "Shinjuku",
+        "status": "active",
+        "skills": ["HVAC"],
+        "existing_appointments": []
+      }
+    ],
+    "expected": {
+      "matching_status": "matched",
+      "candidate_technician_ids": [40, 50],
+      "recommended_technician_id": 40
+    }
+  }
+]

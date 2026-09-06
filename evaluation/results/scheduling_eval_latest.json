@@ -1,0 +1,11 @@
+{
+  "evaluated_at": "2026-09-04T06:43:54.547338+00:00",
+  "total_cases": 11,
+  "failed_count": 0,
+  "duration_seconds": 0.0,
+  "metrics": {
+    "conflict_detection_accuracy_pct": 100.0,
+    "failed_cases_count": 0
+  },
+  "failed_cases": []
+}
